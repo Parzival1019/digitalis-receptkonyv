@@ -26,7 +26,12 @@ Az indító mindent elintéz:
 
 A leállításhoz zárd be a megnyílt terminálablakot (vagy nyomd meg a Ctrl+C billentyűket). A második indítás már csak néhány másodperc. Ha a program már fut, az indító csak megnyitja a böngészőt.
 
-> **macOS-tipp:** ha az első dupla kattintásnál a rendszer azt írja, hogy a fájl „nem azonosított fejlesztőtől” származik, kattints rá jobb gombbal → **Megnyitás** → **Megnyitás**. Ezt csak egyszer kell megtenni.
+> **macOS-tipp:** az internetről letöltött, alá nem írt szkripteket a macOS első indításkor blokkolja („A(z) „start.command” nincs megnyitva”). Ez normális, nem a fájllal van baj. Kattints a **Kész** gombra (ne a „Kukába” gombra), majd válassz az alábbiak közül:
+> - **Rendszerbeállítások → Adatvédelem és biztonság**, görgess le a *Biztonság* részhez, és kattints a **Megnyitás mindenképp** gombra a „start.command” sor mellett (jelszót kér). Ezt csak egyszer kell megtenni.
+> - **Vagy Terminálban** egyszer futtasd az alábbi parancsot (a mappa helyét igazítsd a sajátodhoz), utána a dupla kattintás simán működik:
+>   ```bash
+>   xattr -dr com.apple.quarantine ~/Downloads/digitalis-receptkonyv-main
+>   ```
 >
 > **Windows-tipp:** ha a SmartScreen figyelmeztet, válaszd a **További információ → Futtatás mindenképp** lehetőséget.
 
