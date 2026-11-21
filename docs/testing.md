@@ -9,6 +9,7 @@
 | **Perzisztenciateszt** | Vitest, fájl alapú SQLite | Az adatbázis lezárása és újranyitása után megmaradnak-e az adatok, és nem duplikálódik-e a seed |
 | **Statikus ellenőrzés** | TypeScript (strict) | A teljes kódbázis (`server`, `client`, `shared`, `tests`) típushelyessége |
 | **Végponttól végpontig (E2E) felületi ellenőrzés** | Headless Chrome, DevTools Protocol szkript | Valódi felhasználói folyamat a lefordított alkalmazáson |
+| **Teljesítmény** | Saját mérőszkript (`npm run perf`) | Válaszidők medián, 95. percentilis és maximum értéke, nagy adatmennyiséggel is |
 | **Reszponzivitás** | Headless Chrome, 390×844 eszközemuláció | Vízszintes túlcsordulás minden oldalon, képernyőképek |
 
 **Tesztizoláció:** minden API-tesztfájl (illetve a legtöbb teszt `beforeEach`-ben) saját, `:memory:` SQLite-adatbázist kap, a seeddel együtt. A tesztek így nem függnek egymástól, nem írják a valódi `data/receptkonyv.db` fájlt, és gyorsan futnak. Ehhez az `createApp(db)` az adatbázist paraméterként kapja (függőséginjektálás).
@@ -103,6 +104,8 @@ A futtatás dátuma: **2026. 11. 21.**, macOS (Apple Silicon), Node.js 26.0.0, n
 | 8 | Éles mód | `npm start` | ✅ a 3001-es porton az API és a lefordított frontend is elérhető (SPA-útvonal: 200) |
 | 9 | E2E felületi folyamat | Headless Chrome (lásd 4.3) | ✅ 14/14 ellenőrzés |
 | 10 | Reszponzivitás 390 px-en | Headless Chrome eszközemuláció | ✅ egyik oldalon sincs vízszintes túlcsordulás (`scrollWidth = 390`) |
+| 11 | Egykattintásos indító tiszta letöltésből | `./start.sh` friss másolatban | ✅ telepít, buildel, elindul; a második indítás felismeri a futó példányt; leállításkor nem marad folyamat |
+| 12 | Válaszidő | `npm run perf` | ✅ minden művelet < 3 ms, 1020 recepttel is (lásd 4.5) |
 
 ### 4.2 Automatikus tesztek kimenete
 
@@ -143,6 +146,30 @@ A lefordított alkalmazáson, valódi böngészőben (DevTools Protocol szkript,
 | Ha egy hozzávaló már létezett a törzstáblában (pl. „rizs”), a felhasználó által beírt írásmód („Rizs”) elveszett a receptben | 2 sikertelen API-teszt (`recipes.test.ts`) | Új `display_name` oszlop a `recipe_ingredients` táblában; a törzstábla csak azonosításra és keresésre szolgál |
 | Tailwind v4-ben az egyedi komponensosztályok (`btn-primary` → `btn`) `@apply`-ja `@layer components`-ben nem működik | Tervezéskor | Átírás `@utility` direktívákra |
 | Az E2E szkript két ellenőrzése hibás elvárást tartalmazott (a név szerinti keresés a leírásban is keres, pl. a Csirkepaprikás leírásában szerepel a „nokedlivel”) | E2E futtatás | A szkript javítva (törlés ellenőrzése azonosító alapján, pontosabb szűrés); az alkalmazás viselkedése helyes volt |
+
+### 4.5 Válaszidő-mérés
+
+Futtatás: `npm run perf` ([scripts/measure-performance.mjs](../scripts/measure-performance.mjs)). A szkript ideiglenes adatbázissal saját szervert indít, minden műveletet 10 bemelegítő kérés után 200-szor lefuttat, és a HTTP-kérés teljes körülfordulási idejét méri (localhost, Apple M5, Node.js 26.0.0, 2026. 11. 21.).
+
+| Művelet | Medián (ms) | 95. percentilis (ms) | Maximum (ms) |
+| --- | --- | --- | --- |
+| Receptlista (összes, 20 recept) | 0,27 | 0,44 | 0,75 |
+| Kombinált keresés (név + hozzávaló + szűrők) | 0,23 | 0,35 | 0,80 |
+| Recept részletei | 0,17 | 0,38 | 0,86 |
+| Főoldali statisztika | 0,09 | 0,11 | 0,56 |
+| Recept mentése (10 hozzávaló, 5 lépés) | 0,39 | 0,55 | 2,29 |
+| Kedvenc jelölése | 0,07 | 0,10 | 1,50 |
+| Recept a bevásárlólistára (összevonással) | 0,50 | 0,62 | 2,41 |
+| Recept törlése | 0,14 | 0,18 | 0,95 |
+
+Terheléses adatmennyiséggel (1000 további recept, összesen **1020**):
+
+| Művelet | Medián (ms) | 95. percentilis (ms) | Maximum (ms) |
+| --- | --- | --- | --- |
+| Név szerinti keresés 1020 recept között | 0,23 | 0,27 | 2,10 |
+| Hozzávaló szerinti keresés 1020 recept között | 0,95 | 1,02 | 1,63 |
+
+**Értékelés:** minden szerveroldali művelet 3 ms alatt teljesül, nagyobb adatmennyiségnél is. Ez nagyságrendekkel a 100 ms-os „azonnali válasz” érzetküszöb alatt van, így a PAD „megfelelő válaszidő” célkitűzése teljesül. A mérés localhoston készült, hálózati késleltetés nélkül; lassabb gépen az értékek arányosan nagyobbak lehetnek. A frontend teljes letöltendő mérete tömörítve kb. 136 kB (JS 128 kB + CSS 8 kB).
 
 ## 5. Nem ellenőrzött területek és korlátok
 

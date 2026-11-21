@@ -17,7 +17,8 @@
     "start": "tsx server/src/index.ts",
     "test": "vitest run",
     "test:watch": "vitest",
-    "db:reset": "tsx server/src/db/reset.ts"
+    "db:reset": "tsx server/src/db/reset.ts",
+    "perf": "node scripts/measure-performance.mjs"
   },
   "dependencies": {
     "cors": "^2.8.6",

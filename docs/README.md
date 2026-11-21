@@ -4,6 +4,8 @@ A projekt bemutatása, a telepítés, a futtatás és a tesztek futtatása a gy�
 
 | Dokumentum | Tartalom |
 | --- | --- |
+| [project.md](project.md) | Projektdokumentáció: PAD szerinti teljesülés, csapat, mérföldkövek, döntések, kockázatok, bemutató forgatókönyv |
+| [prezentacio.pdf](prezentacio.pdf) | Projektbemutató diasor |
 | [requirements.md](requirements.md) | Funkcionális és nem funkcionális követelmények, felhasználói esetek |
 | [architecture.md](architecture.md) | Rendszerarchitektúra, frontend és backend kapcsolata, adatfolyamok, REST API |
 | [database.md](database.md) | Adatmodell, táblák, kapcsolatok, Mermaid ER-diagram |

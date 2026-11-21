@@ -109,6 +109,7 @@ npm run db:reset
 | `npm run test` | Automatikus tesztek (Vitest) |
 | `npm run typecheck` | Csak típusellenőrzés |
 | `npm run db:reset` | Adatbázis törlése és újraseedelése |
+| `npm run perf` | Válaszidő-mérés ideiglenes adatbázison |
 
 Környezeti változók (opcionális): `PORT` (alapértelmezés: 3001), `DB_FILE` (az adatbázisfájl elérési útja).
 
@@ -146,6 +147,8 @@ digitalis-receptkonyv/
 
 ## Dokumentáció
 
+- [Projektdokumentáció (PAD szerinti teljesülés, mérföldkövek, kockázatok, demó-forgatókönyv)](docs/project.md)
+- [Prezentáció (PDF)](docs/prezentacio.pdf)
 - [Követelmények](docs/requirements.md)
 - [Architektúra és REST API](docs/architecture.md)
 - [Adatbázis és ER-diagram](docs/database.md)
